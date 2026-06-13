@@ -1,1 +1,39 @@
+name: Update Fixtures
 
+on:
+
+  schedule:
+    - cron: '0 */12 * * *'
+
+  workflow_dispatch:
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - run: pip install -r requirements.txt
+
+    - run: python scripts/update_fixtures.py
+
+    - name: Commit
+
+      run: |
+
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+
+        git add fixtures.csv
+
+        git commit -m "Update fixtures" || echo "No changes"
+
+        git push
